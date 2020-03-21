@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
 import {FlatList, StyleSheet, Button, View, Text} from 'react-native';
+
 import Server from './server';
+import Color from './colors';
+
 export function ListOfServers({servers, RemoveServer}) {
   const [refresh, setRefresh] = useState(false);
 
@@ -62,7 +65,7 @@ const styles = StyleSheet.create({
     left: 50,
     right: 50,
     padding: 25,
-    backgroundColor: 'lightblue',
+    backgroundColor: Color.blue,
     borderRadius: 5,
   },
   button: {

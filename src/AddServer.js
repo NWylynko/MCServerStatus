@@ -8,6 +8,8 @@ import {
   Button,
 } from 'react-native';
 
+import Color from './colors';
+
 export function AddServer({AddCallback}) {
   const [show, setShow] = useState(false);
 
@@ -70,7 +72,7 @@ export function AddServer({AddCallback}) {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: 'lightblue',
+    backgroundColor: Color.yellow,
     position: 'absolute',
     bottom: 50,
     right: 25,
@@ -88,7 +90,7 @@ const styles = StyleSheet.create({
     left: 50,
     right: 50,
     padding: 25,
-    backgroundColor: 'lightblue',
+    backgroundColor: Color.blue,
     borderRadius: 5,
   },
   input: {
