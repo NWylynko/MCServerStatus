@@ -1,6 +1,6 @@
 {
-  "name": "MCServerStatus",
-  "version": "0.1.0",
+  "name": "mcserverstatus",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",

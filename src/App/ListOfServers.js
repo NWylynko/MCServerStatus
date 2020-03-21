@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {FlatList, StyleSheet, Button, View, Text} from 'react-native';
 
-import Server from './server';
-import Color from './colors';
+import Server from './ListOfServers/server';
+import Color from '../colors';
 
 export function ListOfServers({servers, RemoveServer}) {
   const [refresh, setRefresh] = useState(false);

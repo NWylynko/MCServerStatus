@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
 import {
   TouchableOpacity,
@@ -8,7 +9,7 @@ import {
   Button,
 } from 'react-native';
 
-import Color from './colors';
+import Color from '../colors';
 
 export function AddServer({AddCallback}) {
   const [show, setShow] = useState(false);
