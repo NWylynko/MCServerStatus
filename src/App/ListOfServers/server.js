@@ -1,34 +1,46 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 
 import Ping from './server/ping';
 
+
 export default function Server({id, host, port, refresh, setShowOptions}) {
   const [status, setStatus] = useState();
 
+  const [bgColor] = useState(randomPascalColor());
+
+
   useEffect(() => {
     if (refresh) {
-      setStatus();
-      Ping(host, parseInt(port, 10))
-        .then(setStatus)
-        .catch(setStatus);
+      _ping();
     }
-  }, [host, port, refresh]);
+  }, [refresh, _ping]);
 
   useEffect(() => {
     if (!status) {
-      setStatus();
-      Ping(host, parseInt(port, 10))
-        .then(setStatus)
-        .catch(setStatus);
+      _ping();
     }
-  }, [host, port, status]);
+  }, [status, _ping]);
+
+  const pressed = () => {
+    if (!status?.online) {
+      _ping();
+    }
+  };
+
+  const _ping = useCallback(() => {
+    setStatus();
+    Ping(host, parseInt(port, 10))
+      .then(setStatus)
+      .catch(setStatus);
+  }, [host, port]);
 
   return (
     <TouchableOpacity
-      style={[styles.container, {backgroundColor: randomPascalColor()}]}
-      onLongPress={() => setShowOptions(id)}>
+      style={[styles.container, {backgroundColor: bgColor}]}
+      onLongPress={() => setShowOptions(id)}
+      onPress={pressed}>
       <View style={[styles.horizontal, {width: '100%'}]}>
         <Text style={styles.title}>
           {host}
@@ -49,7 +61,10 @@ export default function Server({id, host, port, refresh, setShowOptions}) {
               </Text>
             </View>
           ) : (
-            <Text style={styles.offline}>Offline</Text>
+            <>
+              <Text style={styles.offline}>Offline</Text>
+              <Text>press to re-ping ↺</Text>
+            </>
           ))}
       </View>
       {status &&
