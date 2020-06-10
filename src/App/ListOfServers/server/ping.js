@@ -65,7 +65,9 @@ export default function Ping(host = 'localhost', port = 25565, timeout = 5) {
         resolve({
           online: true,
           version: json.version.name,
-          motd: json.description.text,
+          motd:
+            json.description.text ||
+            json.description.extra.map(({text}) => text).join(''),
           current_players: json.players.online,
           max_players: json.players.max,
           ping: Math.round(new Date() - start_time),

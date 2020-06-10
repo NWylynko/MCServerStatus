@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, SafeAreaView, Text} from 'react-native';
+import {StyleSheet, SafeAreaView} from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -51,13 +51,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {data.length ? (
-        <ListOfServers servers={data} RemoveServer={RemoveServerCallback} />
-      ) : (
-        <Text style={styles.text}>
-          Press the + to add a new Minecraft server
-        </Text>
-      )}
+      <ListOfServers servers={data} RemoveServer={RemoveServerCallback} />
       <AddServer AddCallback={AddServerCallback} />
     </SafeAreaView>
   );
@@ -67,11 +61,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  text: {
-    fontSize: 20,
-    alignSelf: 'center',
-    marginHorizontal: 10,
-    marginVertical: 50,
   },
 });

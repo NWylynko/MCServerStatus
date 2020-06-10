@@ -22,6 +22,11 @@ export function ListOfServers({servers, RemoveServer}) {
     <>
       <FlatList
         data={servers}
+        ListEmptyComponent={() => (
+          <Text style={styles.text}>
+            Press the + to add a new Minecraft server
+          </Text>
+        )}
         onRefresh={() => {
           setRefresh(true);
           setTimeout(() => {
@@ -38,7 +43,7 @@ export function ListOfServers({servers, RemoveServer}) {
             id={item.id}
           />
         )}
-        keyExtractor={item => 'pp_' + item.id}
+        keyExtractor={(item, i) => 'pp_' + item.id + i}
       />
       {showOptions ? (
         <View style={styles.options}>
@@ -76,5 +81,11 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     fontSize: 20,
     textAlign: 'center',
+  },
+  text: {
+    fontSize: 20,
+    alignSelf: 'center',
+    marginHorizontal: 10,
+    marginVertical: 50,
   },
 });

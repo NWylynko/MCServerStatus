@@ -39,7 +39,9 @@ export default function Server({id, host, port, refresh, setShowOptions}) {
           status.online ? (
             <View style={styles.info}>
               <Text style={styles.online}>Online</Text>
-              <Text style={styles.title}>{status.version}</Text>
+              <Text style={styles.title}>
+                {status.version.replace(/§[0-9a-z]/gi, '')}
+              </Text>
               <Text style={styles.title}>{status.ping}ms</Text>
               <Text style={[styles.title, {}]}>
                 {status.current_players}/{status.max_players}
@@ -62,14 +64,22 @@ export default function Server({id, host, port, refresh, setShowOptions}) {
           ) : null}
         </View>
 
-        <Text style={styles.motd}>{status ? status.motd : 'Loading...'}</Text>
+        <Text style={styles.motd}>
+          {status
+            ? status.motd
+              ? status.motd.replace(/§[0-9a-z]/gi, '')
+              : null
+            : 'Loading...'}
+        </Text>
       </View>
       <Text>
         Players:{' '}
         {status
           ? status.players
             ? status.players.map(item => (
-                <Text key={item.id}>{item.name}, </Text>
+                <Text key={item.id}>
+                  {item.name.replace(/§[0-9a-z]/gi, '')},{' '}
+                </Text>
               ))
             : null
           : null}
