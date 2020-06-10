@@ -27,16 +27,17 @@ export default function Server({id, host, port, refresh, setShowOptions}) {
 
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[styles.container, {backgroundColor: randomPascalColor()}]}
       onLongPress={() => setShowOptions(id)}>
       <View style={[styles.horizontal, {width: '100%'}]}>
         <Text style={styles.title}>
           {host}
-          {port === '25565' ? null : ':' + port}
+          {port !== '25565' && ':' + port}
+          {!status && ' Pinging...'}
         </Text>
 
-        {status ? (
-          status.online ? (
+        {status &&
+          (status.online ? (
             <View style={styles.info}>
               <Text style={styles.online}>Online</Text>
               <Text style={styles.title}>
@@ -49,48 +50,35 @@ export default function Server({id, host, port, refresh, setShowOptions}) {
             </View>
           ) : (
             <Text style={styles.offline}>Offline</Text>
-          )
-        ) : null}
+          ))}
       </View>
-      <View style={[styles.horizontal, styles.motd]}>
-        <View style={{width: 50, height: 50}}>
-          {status ? (
-            status.icon ? (
-              <Image
-                source={{uri: status.icon}}
-                style={{flex: 1, borderRadius: 2}}
-              />
-            ) : null
-          ) : null}
-        </View>
+      {status &&
+        (status.online && (
+          <>
+            <View style={[styles.horizontal, styles.motd]}>
+              <View style={{width: 50, height: 50}}>
+                {status.icon && (
+                  <Image
+                    source={{uri: status.icon}}
+                    style={{flex: 1, borderRadius: 2}}
+                  />
+                )}
+              </View>
 
-        <Text style={styles.motd}>
-          {status
-            ? status.motd
-              ? status.motd.replace(/§[0-9a-z]/gi, '')
-              : null
-            : 'Loading...'}
-        </Text>
-      </View>
-      <Text>
-        Players:{' '}
-        {status
-          ? status.players
-            ? status.players.map(item => (
-                <Text key={item.id}>
-                  {item.name.replace(/§[0-9a-z]/gi, '')},{' '}
-                </Text>
-              ))
-            : null
-          : null}
-      </Text>
+              {status.motd && <Motd motd={status.motd} />}
+            </View>
+            {status.players && <Players players={status.players} />}
+          </>
+        ))}
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    margin: 10,
+    margin: 5,
+    padding: 5,
+    borderRadius: 5,
   },
   title: {
     margin: 5,
@@ -115,3 +103,28 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 });
+
+function Motd({motd}) {
+  return <Text style={styles.motd}>{motd.replace(/§[0-9a-z]/gi, '')}</Text>;
+}
+
+function Players({players}) {
+  return (
+    <Text>
+      Players:{' '}
+      {players.map(item => (
+        <Text key={item.id}>{item.name.replace(/§[0-9a-z]/gi, '')}, </Text>
+      ))}
+    </Text>
+  );
+}
+
+function randomPascalColor() {
+  let min = 220;
+  let max = 250;
+  return `rgb(${random(min, max)}, ${random(min, max)}, ${random(min, max)})`;
+}
+
+function random(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
