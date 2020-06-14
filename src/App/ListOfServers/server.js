@@ -3,13 +3,10 @@ import React, {useEffect, useState, useCallback} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 
 import Ping from './server/ping';
-
+import Colors from '../../colors';
 
 export default function Server({id, host, port, refresh, setShowOptions}) {
   const [status, setStatus] = useState();
-
-  const [bgColor] = useState(randomPascalColor());
-
 
   useEffect(() => {
     if (refresh) {
@@ -38,7 +35,7 @@ export default function Server({id, host, port, refresh, setShowOptions}) {
 
   return (
     <TouchableOpacity
-      style={[styles.container, {backgroundColor: bgColor}]}
+      style={styles.container}
       onLongPress={() => setShowOptions(id)}
       onPress={pressed}>
       <View style={[styles.horizontal, {width: '100%'}]}>
@@ -94,6 +91,8 @@ const styles = StyleSheet.create({
     margin: 5,
     padding: 5,
     borderRadius: 5,
+    borderWidth: 2,
+    borderColor: Colors.blue,
   },
   title: {
     margin: 5,
@@ -132,14 +131,4 @@ function Players({players}) {
       ))}
     </Text>
   );
-}
-
-function randomPascalColor() {
-  let min = 220;
-  let max = 250;
-  return `rgb(${random(min, max)}, ${random(min, max)}, ${random(min, max)})`;
-}
-
-function random(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
