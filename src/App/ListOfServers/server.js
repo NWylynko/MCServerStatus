@@ -1,12 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState, useCallback} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
-
+import {useNavigation} from '@react-navigation/native';
 import Ping from './server/ping';
 import Colors from '../../colors';
 
 export default function Server({id, host, port, refresh, setShowOptions}) {
   const [status, setStatus] = useState();
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (refresh) {
@@ -23,6 +24,8 @@ export default function Server({id, host, port, refresh, setShowOptions}) {
   const pressed = () => {
     if (!status?.online) {
       _ping();
+    } else {
+      navigation.navigate('Server', {...status, id, host, port});
     }
   };
 
