@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {FlatList, StyleSheet, Button, View, Text} from 'react-native';
 
 import Server from './ListOfServers/server';
-import Color from '../colors';
+import StoreContext from '../../store';
 
 export function ListOfServers({servers, RemoveServer}) {
   const [refresh, setRefresh] = useState(false);
-
+  const {color} = useContext(StoreContext);
   const [showOptions, setShowOptions] = useState();
 
   function deleteServer() {
@@ -38,15 +38,16 @@ export function ListOfServers({servers, RemoveServer}) {
           <Server
             host={item.host}
             port={item.port}
+            setRefresh={setRefresh}
             refresh={refresh}
             setShowOptions={setShowOptions}
             id={item.id}
           />
         )}
-        keyExtractor={(item, i) => 'pp_' + item.id + i}
+        keyExtractor={(item, i) => 'mc_' + item.id + i}
       />
       {showOptions ? (
-        <View style={styles.options}>
+        <View style={[styles.options, {backgroundColor: color[1]}]}>
           <Text style={styles.title}>
             {
               servers.filter(item => {
@@ -70,7 +71,6 @@ const styles = StyleSheet.create({
     left: 50,
     right: 50,
     padding: 25,
-    backgroundColor: Color.blue,
     borderRadius: 5,
   },
   button: {

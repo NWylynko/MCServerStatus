@@ -74,9 +74,9 @@ export default function Ping(host = 'localhost', port = 25565, timeout = 5) {
           icon: json.favicon,
           players: json.players.sample,
         });
-      } catch (err) {
+      } catch (error) {
         // Our data is corrupt? Fail hard.
-        reject({online: false});
+        reject({online: false, error});
 
         return;
       }
@@ -89,12 +89,14 @@ export default function Ping(host = 'localhost', port = 25565, timeout = 5) {
       client.destroy();
       reject({
         online: false,
+        error,
       });
     });
 
     client.on('close', error => {
       reject({
         online: false,
+        error,
       });
     });
   });

@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -9,13 +9,15 @@ import {
   Button,
 } from 'react-native';
 
-import Color from '../colors';
+import StoreContext from '../../store';
 
 export function AddServer({AddCallback}) {
   const [show, setShow] = useState(false);
 
   const [host, setHost] = useState('');
   const [port, setPort] = useState('25565');
+
+  const {color} = useContext(StoreContext);
 
   function submit() {
     if (host) {
@@ -34,11 +36,13 @@ export function AddServer({AddCallback}) {
 
   return (
     <>
-      <TouchableOpacity style={styles.button} onPress={() => setShow(true)}>
+      <TouchableOpacity
+        style={[styles.button, {backgroundColor: color[0]}]}
+        onPress={() => setShow(true)}>
         <Text style={styles.plus}>+</Text>
       </TouchableOpacity>
       {show ? (
-        <View style={styles.container}>
+        <View style={[styles.container, {backgroundColor: color[1]}]}>
           <Text style={styles.title}>Add New Server</Text>
           <Text>IP</Text>
           <TextInput
@@ -73,12 +77,13 @@ export function AddServer({AddCallback}) {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: Color.yellow,
     position: 'absolute',
     bottom: 50,
     right: 25,
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    // paddingVertical: 10,
+    paddingBottom: 10,
+    paddingTop: 5,
     borderRadius: 100,
   },
   plus: {
@@ -91,7 +96,6 @@ const styles = StyleSheet.create({
     left: 50,
     right: 50,
     padding: 25,
-    backgroundColor: Color.blue,
     borderRadius: 5,
   },
   input: {

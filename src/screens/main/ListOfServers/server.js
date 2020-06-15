@@ -1,63 +1,100 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useEffect, useCallback, useContext, useState} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Ping from './server/ping';
-import Colors from '../../colors';
+import StoreContext from '../../../store';
 
 export default function Server({id, host, port, refresh, setShowOptions}) {
-  const [status, setStatus] = useState();
+  const {serverData, setServerData, color, setPingData} = useContext(
+    StoreContext,
+  );
   const navigation = useNavigation();
+  const [pinging, setPinging] = useState(true);
+  const [softPinging, setSoftPinging] = useState(false); // to force a rerender after a silent ping
 
   useEffect(() => {
     if (refresh) {
+      // the parent list can call a refresh of all items
+      setPinging(true);
       _ping();
     }
-  }, [refresh, _ping]);
+  }, [refresh, _ping, setStatus]);
 
   useEffect(() => {
-    if (!status) {
+    _ping(); // ping when screen is first shown
+    setPingData(state => {
+      state[id] = [];
+      return state;
+    });
+  }, [_ping, id, setPingData]);
+
+  useEffect(() => {
+    let autoPing = setInterval(() => {
+      setSoftPinging(true);
       _ping();
-    }
-  }, [status, _ping]);
+    }, 60000);
+    return () => {
+      clearTimeout(autoPing);
+    };
+  }, [_ping]);
 
   const pressed = () => {
-    if (!status?.online) {
+    if (!serverData[id]?.online) {
+      setPinging(true);
       _ping();
     } else {
-      navigation.navigate('Server', {...status, id, host, port});
+      navigation.navigate('Server', {id, host, port});
     }
   };
 
-  const _ping = useCallback(() => {
-    setStatus();
-    Ping(host, parseInt(port, 10))
-      .then(setStatus)
-      .catch(setStatus);
-  }, [host, port]);
+  const _ping = useCallback(async () => {
+    try {
+      const data = await Ping(host, parseInt(port, 10));
+      setStatus(data);
+      setPinging(false);
+      setSoftPinging(false);
+    } catch (data) {
+      setStatus(data);
+      setSoftPinging(false);
+      setPinging(false);
+    }
+  }, [host, port, setStatus]);
+
+  const setStatus = useCallback(
+    (data = {}) => {
+      setServerData(state => {
+        state[id] = data;
+        return state;
+      });
+    },
+    [setServerData, id],
+  );
 
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[styles.container, {borderColor: color[1]}]}
       onLongPress={() => setShowOptions(id)}
       onPress={pressed}>
       <View style={[styles.horizontal, {width: '100%'}]}>
         <Text style={styles.title}>
           {host}
           {port !== '25565' && ':' + port}
-          {!status && ' Pinging...'}
+          {softPinging && ''}
+          {pinging && ' Pinging...'}
         </Text>
 
-        {status &&
-          (status.online ? (
+        {!pinging &&
+          serverData[id] &&
+          (serverData[id].online ? (
             <View style={styles.info}>
               <Text style={styles.online}>Online</Text>
               <Text style={styles.title}>
-                {status.version.replace(/§[0-9a-z]/gi, '')}
+                {serverData[id].version.replace(/§[0-9a-z]/gi, '')}
               </Text>
-              <Text style={styles.title}>{status.ping}ms</Text>
+              <Text style={styles.title}>{serverData[id].ping}ms</Text>
               <Text style={[styles.title, {}]}>
-                {status.current_players}/{status.max_players}
+                {serverData[id].current_players}/{serverData[id].max_players}
               </Text>
             </View>
           ) : (
@@ -67,22 +104,25 @@ export default function Server({id, host, port, refresh, setShowOptions}) {
             </>
           ))}
       </View>
-      {status &&
-        (status.online && (
+      {!pinging &&
+        serverData[id] &&
+        (serverData[id].online && (
           <>
             <View style={[styles.horizontal, styles.motd]}>
               <View style={{width: 50, height: 50}}>
-                {status.icon && (
+                {serverData[id].icon && (
                   <Image
-                    source={{uri: status.icon}}
+                    source={{uri: serverData[id].icon}}
                     style={{flex: 1, borderRadius: 2}}
                   />
                 )}
               </View>
 
-              {status.motd && <Motd motd={status.motd} />}
+              {serverData[id].motd && <Motd motd={serverData[id].motd} />}
             </View>
-            {status.players && <Players players={status.players} />}
+            {serverData[id].players && (
+              <Players players={serverData[id].players} />
+            )}
           </>
         ))}
     </TouchableOpacity>
@@ -95,7 +135,6 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 5,
     borderWidth: 2,
-    borderColor: Colors.blue,
   },
   title: {
     margin: 5,
