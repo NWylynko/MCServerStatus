@@ -1,20 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState, useContext} from 'react';
+import React, {useContext} from 'react';
 import {View, Image, StyleSheet, Dimensions, ScrollView} from 'react-native';
 import StoreContext from '../../store';
 import Text from '../../components/Text';
 
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart,
-} from 'react-native-chart-kit';
+import {LineChart} from 'react-native-chart-kit';
 
 export function Details({details, id}) {
-  const {color, pingData, playerData} = useContext(StoreContext);
+  const {pingData, playerData} = useContext(StoreContext);
   return (
     <ScrollView style={styles.container}>
       {details.icon && (

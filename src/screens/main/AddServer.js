@@ -1,13 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useContext} from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  View,
-  TextInput,
-  Button,
-} from 'react-native';
+import {Text, StyleSheet, View, TextInput, Button} from 'react-native';
 import CircleButton from '../../components/CircleButton';
 import StoreContext from '../../store';
 
