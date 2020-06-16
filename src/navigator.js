@@ -2,15 +2,27 @@ import React, {useContext} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import StoreContext from './store';
+
 import Main from './screens/main';
 import ServerPage from './screens/server';
+import Settings from './screens/settings';
 
 const Stack = createStackNavigator();
 
 export default function MyStack() {
-  const {serverData} = useContext(StoreContext);
+  const {serverData, color} = useContext(StoreContext);
+  const MyTheme = {
+    dark: color.lightMode,
+    colors: {
+      primary: color.text,
+      background: color.background,
+      card: color.background,
+      text: color.text,
+      border: color.background,
+    },
+  };
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={MyTheme}>
       <Stack.Navigator>
         <Stack.Screen
           name="List"
@@ -29,6 +41,7 @@ export default function MyStack() {
               : 'red',
           })}
         />
+        <Stack.Screen name="Settings" component={Settings} />
       </Stack.Navigator>
     </NavigationContainer>
   );

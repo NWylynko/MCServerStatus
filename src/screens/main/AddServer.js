@@ -8,7 +8,7 @@ import {
   TextInput,
   Button,
 } from 'react-native';
-
+import CircleButton from '../../components/CircleButton';
 import StoreContext from '../../store';
 
 export function AddServer({AddCallback}) {
@@ -36,11 +36,11 @@ export function AddServer({AddCallback}) {
 
   return (
     <>
-      <TouchableOpacity
-        style={[styles.button, {backgroundColor: color[0]}]}
-        onPress={() => setShow(true)}>
-        <Text style={styles.plus}>+</Text>
-      </TouchableOpacity>
+      <CircleButton
+        onPress={() => setShow(true)}
+        style={{bottom: 50, right: 25}}>
+        +
+      </CircleButton>
       {show ? (
         <View style={[styles.container, {backgroundColor: color[1]}]}>
           <Text style={styles.title}>Add New Server</Text>

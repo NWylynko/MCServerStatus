@@ -1,9 +1,10 @@
 import React, {useContext} from 'react';
-import {StyleSheet, SafeAreaView, Text, View} from 'react-native';
+import {StyleSheet, SafeAreaView, View} from 'react-native';
 import {useRoute} from '@react-navigation/native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {Details} from './server/Details';
 import StoreContext from '../store';
+import Text from '../components/Text';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -27,7 +28,12 @@ export default function Server() {
       <Tab.Navigator
         tabBarOptions={{indicatorStyle: {backgroundColor: color[1]}}}>
         <Tab.Screen name="Details">
-          {() => <Details details={serverData[route.params.id]} />}
+          {() => (
+            <Details
+              details={serverData[route.params.id]}
+              id={route.params.id}
+            />
+          )}
         </Tab.Screen>
         <Tab.Screen name="rcon" component={Rcon} />
       </Tab.Navigator>
@@ -42,7 +48,6 @@ function Rcon() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   horizontal: {
     flexDirection: 'row',

@@ -1,14 +1,20 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useCallback, useContext, useState} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import {StyleSheet, View, TouchableOpacity, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Ping from './server/ping';
 import StoreContext from '../../../store';
+import Text from '../../../components/Text';
 
 export default function Server({id, host, port, refresh, setShowOptions}) {
-  const {serverData, setServerData, color, setPingData} = useContext(
-    StoreContext,
-  );
+  const {
+    serverData,
+    setServerData,
+    color,
+    setPingData,
+    setRerender,
+    setPlayerData,
+  } = useContext(StoreContext);
   const navigation = useNavigation();
   const [pinging, setPinging] = useState(true);
   const [softPinging, setSoftPinging] = useState(false); // to force a rerender after a silent ping
@@ -22,12 +28,16 @@ export default function Server({id, host, port, refresh, setShowOptions}) {
   }, [refresh, _ping, setStatus]);
 
   useEffect(() => {
-    _ping(); // ping when screen is first shown
     setPingData(state => {
       state[id] = [];
       return state;
     });
-  }, [_ping, id, setPingData]);
+    setPlayerData(state => {
+      state[id] = [];
+      return state;
+    });
+    _ping(); // ping when screen is first shown
+  }, [_ping, id, setPingData, setPlayerData]);
 
   useEffect(() => {
     let autoPing = setInterval(() => {
@@ -52,14 +62,20 @@ export default function Server({id, host, port, refresh, setShowOptions}) {
     try {
       const data = await Ping(host, parseInt(port, 10));
       setStatus(data);
+      setPingStatus(data.ping);
+      setPlayerStatus(data.current_players);
       setPinging(false);
       setSoftPinging(false);
+      setRerender(state => !state);
+      console.log('pizza time', id, Date());
     } catch (data) {
       setStatus(data);
+      setPingStatus(0);
+      setPlayerStatus(0);
       setSoftPinging(false);
       setPinging(false);
     }
-  }, [host, port, setStatus]);
+  }, [host, id, port, setPingStatus, setPlayerStatus, setRerender, setStatus]);
 
   const setStatus = useCallback(
     (data = {}) => {
@@ -69,6 +85,26 @@ export default function Server({id, host, port, refresh, setShowOptions}) {
       });
     },
     [setServerData, id],
+  );
+
+  const setPingStatus = useCallback(
+    ping => {
+      setPingData(state => {
+        state[id] = state[id].concat([ping]);
+        return state;
+      });
+    },
+    [setPingData, id],
+  );
+
+  const setPlayerStatus = useCallback(
+    playerNum => {
+      setPlayerData(state => {
+        state[id] = state[id].concat([playerNum]);
+        return state;
+      });
+    },
+    [setPlayerData, id],
   );
 
   return (
