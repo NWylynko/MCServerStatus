@@ -16,7 +16,7 @@ export function Details({details, id}) {
         </View>
       )}
       <Text style={{alignSelf: 'center', padding: 5, margin: 5}}>
-        {details.motd.replace(/§[0-9a-z]/gi, '')}
+        {details.motd && details.motd.replace(/§[0-9a-z]/gi, '')}
       </Text>
       <Text style={{marginLeft: 15}}>Players</Text>
       <Chart data={playerData[id]} />
